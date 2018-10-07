@@ -8,12 +8,17 @@ class UsersController < ApplicationController
   end
 
   post '/signup' do
-    if !params[:username].empty? && !params[:email].empty? && !params[:signup].empty?
-      @user = User.create(params)
-      session[:user_id] = @user.id
-      redirect to "/tweets"
+    if !Helpers.logged_in?(session)
+      user = User.new(:username => params[:username], :password => params[:password])
+
+      if user.save && params[:username] != "" && params[:email] != ""
+        session[:user_id] = user.id
+        redirect "/tweets"
+      else
+        redirect "/signup"
+      end
     else
-      redirect to "/signup"
+      redirect "/tweets"
     end
   end
 
@@ -26,7 +31,7 @@ class UsersController < ApplicationController
   end
 
   post '/login' do
-    user = user.find_by(username: params[:username])
+    user = User.find_by(username: params[:username])
 
     if user && user.authenticate(params[:password])
       session[:user_id] = user.id
@@ -54,4 +59,6 @@ class UsersController < ApplicationController
       redirect to '/login'
     end
   end
+
+
 end
