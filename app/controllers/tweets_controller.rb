@@ -9,6 +9,33 @@ class TweetsController < ApplicationController
     end
   end
 
+  get '/tweets/new' do
+    if Helpers.logged_in?(session)
+      @user = Helpers.current_user(session)
+      erb :'tweets/new'
+    else
+      redirect to '/login'
+    end
+  end
 
+  post '/tweets' do
+    if params[:content] != ""
+      tweet = Tweet.new(content: params[:content])
+      tweet.user_id = session[:user_id]
+      tweet.save
+      redirect to '/tweets'
+    else
+      redirect to '/tweets/new'
+    end
+  end
+
+  get '/tweets/:id' do
+    if Helpers.logged_in?(session)
+      @tweet = Tweet.find_by(id: params[:id])
+      erb :'tweets/show'
+    else
+      redirect to '/login'
+    end
+  end
 
 end

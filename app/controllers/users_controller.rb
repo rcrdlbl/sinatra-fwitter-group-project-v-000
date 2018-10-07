@@ -42,7 +42,7 @@ class UsersController < ApplicationController
   end
 
   get '/logout' do
-    if Helpers.logged_in(session)
+    if Helpers.logged_in?(session)
       session.clear
       redirect to '/login'
     else
@@ -51,13 +51,9 @@ class UsersController < ApplicationController
   end
 
   get '/users/:slug' do
-    if Helpers.logged_in?(session)
-      @user = User.find_by_slug(params[:slug])
-      @tweets = @user.tweets
-      erb :'users/show'
-    else
-      redirect to '/login'
-    end
+    @user = User.find_by_slug(params[:slug])
+    @tweets = @user.tweets
+    erb :'users/show'
   end
 
 
