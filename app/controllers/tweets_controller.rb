@@ -38,4 +38,24 @@ class TweetsController < ApplicationController
     end
   end
 
+  get '/tweets/:id/edit' do
+    if Helpers.logged_in?(session)
+      @tweet = Tweet.find_by(id: params[:id])
+      erb :'tweets/edit'
+    else
+      redirect to '/login'
+    end
+  end
+
+  patch '/tweets/:id' do
+    tweet = Tweet.find_by(id: params[:id])
+    if params[:content] != ""
+      tweet.content = params[:content]
+      tweet.save
+      redirect to '/tweets'
+    else
+      redirect to "/tweets/#{params[:id]}/edit"
+    end
+  end
+
 end
